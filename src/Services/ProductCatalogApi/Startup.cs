@@ -22,7 +22,14 @@ namespace ProductCatalogApi
         {
             //Here we linked catalog settings to global configuration. This means it will be applicable project wide
             services.Configure<CatalogSettings>(Configuration);
-            services.AddDbContext<CatalogContext>(options=>options.UseSqlServer(Configuration["ConnectionString"]));
+            var server = Configuration["DatabaseServer"];
+            var database = Configuration["DatabaseName"];
+            var user = Configuration["DatabaseUser"];
+            var password = Configuration["DatabaseUserPassword"];
+            var connectionString = $"Server={server};Database={database};User={user};Password={password};";
+
+            services.AddDbContext<CatalogContext>(options => options.UseSqlServer(connectionString));
+            //services.AddDbContext<CatalogContext>(options=>options.UseSqlServer(Configuration["ConnectionString"]));
             // Add framework services.
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddSwaggerGen(options =>
