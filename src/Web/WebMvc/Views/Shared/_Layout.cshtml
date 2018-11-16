@@ -23,11 +23,11 @@
 
     </environment>
     @*<environment exclude="Development">
-            <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.min.css"
-                  asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
-                  asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
-            <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
-        </environment>*@
+        <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.min.css"
+              asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+              asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
+        <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
+    </environment>*@
 </head>
 <body>
     <header class="navbar navbar-light navbar-static-top">
@@ -35,13 +35,21 @@
             <article class="row">
                 <section class="col-lg-7 col-md-6 col-xs-12">
                     <a class="navbar-brand" routerLink="catalog">
-                        <a asp-area="" asp-controller="Home" asp-action="Index">
+                        <a asp-area="" asp-controller="Catalog" asp-action="Index">
                             <img src="~/images/logo-4.png" />
                         </a>
                     </a>
                 </section>
-
+               @await Html.PartialAsync("_LoginPartial")
             </article>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    
+                    <li><a asp-area="" asp-controller="Catalog" asp-action="About">About</a></li>
+                   
+                </ul>
+                
+            </div>
         </div>
     </header>
     <div class="container body-content">
@@ -56,14 +64,14 @@
                     </section>
 
                     <section class="col-sm-6">
-                        <img class="esh-app-footer-text hidden-xs" src="~/images/main_banner_text.png" width="335" height="26" alt="footer text image" />
+                        <img class="esh-app-footer-text hidden-xs" src="~/images/main_footer_text.png" width="335" height="26" alt="footer text image" />
                     </section>
 
                 </article>
             </div>
         </footer>
     </div>
-
+   
 
     <environment include="Development">
         <script src="~/lib/jquery/dist/jquery.js"></script>
