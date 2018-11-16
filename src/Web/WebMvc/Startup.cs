@@ -1,4 +1,5 @@
 ﻿using EcommerceOnContainers.Web.WebMvc.Infrastructure;
+using EcommerceOnContainers.Web.WebMvc.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -22,6 +23,8 @@ namespace EcommerceOnContainers.Web.WebMvc
         {
             services.Configure<AppSettings>(Configuration);
             services.AddSingleton<IHttpClient, CustomHttpClient>();
+            services.AddTransient<ICatalogService, CatalogService>();
+
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
@@ -52,7 +55,7 @@ namespace EcommerceOnContainers.Web.WebMvc
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    template: "{controller=Catalog}/{action=Index}/{id?}");
             });
         }
     }
