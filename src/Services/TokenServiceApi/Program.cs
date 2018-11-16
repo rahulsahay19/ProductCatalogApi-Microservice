@@ -5,11 +5,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 using TokenServiceApi.Data;
+using Microsoft.AspNetCore.Identity;
 using TokenServiceApi.Models;
 
 namespace TokenServiceApi
@@ -22,13 +22,11 @@ namespace TokenServiceApi
 
             using (var scope = host.Services.CreateScope())
             {
-                //Get the services collection registered with DI container
                 var services = scope.ServiceProvider;
 
                 try
                 {
-                    //From the services collection, need to get the instance ApplicationDbContext.
-                    //This context will be responsible for user registration, role registration etc
+
                     var context = services.GetRequiredService<ApplicationDbContext>();
 
                     var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
