@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using System.Reflection;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ProductCatalogApi.Data;
@@ -22,13 +25,27 @@ namespace ProductCatalogApi
         {
             //Here we linked catalog settings to global configuration. This means it will be applicable project wide
             services.Configure<CatalogSettings>(Configuration);
-            var server = Configuration["DatabaseServer"];
-            var database = Configuration["DatabaseName"];
-            var user = Configuration["DatabaseUser"];
-            var password = Configuration["DatabaseUserPassword"];
-            var connectionString = $"Server={server};Database={database};User={user};Password={password};";
+            var hostname = Environment.GetEnvironmentVariable("SQLSERVER_HOST") ?? "mssqlserver";
+            var password = Environment.GetEnvironmentVariable("SA_PASSWORD") ?? "Docker@1";
 
-            services.AddDbContext<CatalogContext>(options => options.UseSqlServer(connectionString));
+            var connectionString = $"Server={hostname};Database=CatalogDb;User ID=sa;Password={password};";
+
+
+            services.AddDbContext<CatalogContext>(options =>
+            {
+                options.UseSqlServer(connectionString,
+                    sqlServerOptionsAction: sqlOptions =>
+                    {
+                        sqlOptions.MigrationsAssembly(typeof(Startup).GetTypeInfo().Assembly.GetName().Name);
+                        //Configuring Connection Resiliency: https://docs.microsoft.com/en-us/ef/core/miscellaneous/connection-resiliency 
+                        sqlOptions.EnableRetryOnFailure(maxRetryCount: 5, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null);
+                    });
+
+                // Changing default behavior when client evaluation occurs to throw. 
+                // Default in EF Core would be to log a warning when client evaluation is performed.
+                options.ConfigureWarnings(warnings => warnings.Throw(RelationalEventId.QueryClientEvaluationWarning));
+                //Check Client vs. Server evaluation: https://docs.microsoft.com/en-us/ef/core/querying/client-eval
+            });
             //services.AddDbContext<CatalogContext>(options=>options.UseSqlServer(Configuration["ConnectionString"]));
             // Add framework services.
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);

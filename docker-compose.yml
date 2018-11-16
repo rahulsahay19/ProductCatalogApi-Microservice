@@ -1,55 +1,74 @@
 version: "3.2"
 
 networks:
-   front-tier:
-   back-tier:
+  front-tier:
+  back-tier:
+
 
 services:
-   webmvc:
+
+  webmvc:
     build: 
       context: .\src\Web\WebMvc
       dockerfile: Dockerfile
     environment: 
       - ASPNETCORE_ENVIRONMENT=Development 
       - CatalogUrl=http://catalog
+      - IdentityUrl=http://10.0.75.1:5000
     container_name: webshop
     ports:
-      - "5500:80"
+      - "5200:80"
     networks:
       - front-tier 
     depends_on:
       - catalog
+      - tokenserver
+             
 
-   catalog:
-      build:
-         context: .\src\Services\ProductCatalogApi
-         dockerfile: Dockerfile
-      image: ecommerce/catalog
-      environment:
-         - DatabaseServer=mssqlserver
-         - DatabaseName=MoviesDb
-         - DatabaseUser=sa
-         - DatabaseUserPassword=Docker@1
-      container_name: catalogApi
-      ports:
-         - "5000:80"
-      networks:
-         - back-tier
-         - front-tier
-      depends_on:
-         - mssqlserver
-         
-   mssqlserver:
-      image: "microsoft/mssql-server-linux:latest"
-      ports:
-         - "1445:1433"
 
-      container_name: mssqlcontainer
-      environment:
-         - ACCEPT_EULA=Y
-         - SA_PASSWORD=Docker@1
-      networks:
-         - back-tier
-
+  catalog:
+    build: 
+      context: .\src\Services\ProductCatalogApi
+      dockerfile: Dockerfile
+    environment: 
+      - ASPNETCORE_ENVIRONMENT=Development 
+    container_name: catalogapi
+    ports:
+      - "5100:80"
+    networks:
+      - back-tier
+      - front-tier 
+    depends_on:
+      - mssqlserver
       
 
+  tokenserver:
+    build: 
+      context: .\src\Services\TokenServiceApi
+      dockerfile: Dockerfile
+    environment: 
+      - ASPNETCORE_ENVIRONMENT=Development 
+      - MvcClient=http://localhost:5200   
+    container_name: tokenserviceapi
+    ports:
+      - "5000:80"
+    networks:
+      - back-tier
+      - front-tier 
+    depends_on:
+      - mssqlserver
+
+
+  mssqlserver:
+    image: "microsoft/mssql-server-linux:latest"
+    container_name: mssqldata
+    ports:
+      - "1445:1433" 
+    networks:
+      - back-tier
+    environment:
+      - SA_PASSWORD=Docker@1
+      - ACCEPT_EULA="Y"
+      
+
+    
