@@ -71,4 +71,9 @@ services:
       - ACCEPT_EULA="Y"
       
 
-    
+  basket.data:
+    image: redis
+    ports:
+      - "6377:6379"  
+    networks:
+      - back-tier 
