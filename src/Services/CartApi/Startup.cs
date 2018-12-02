@@ -162,6 +162,8 @@ namespace CartApi
                {
                    c.SwaggerEndpoint($"{ (!string.IsNullOrEmpty(pathBase) ? pathBase : string.Empty) }/swagger/v1/swagger.json", "CartApi V1");
                  //  c.ConfigureOAuth2("basketswaggerui", "", "", "Basket Swagger UI");
+                   c.OAuthClientId("basketswaggerui");
+                   c.OAuthAppName("Basket Swagger UI");
                });
         }
 

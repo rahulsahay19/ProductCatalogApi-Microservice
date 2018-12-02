@@ -1,0 +1,20 @@
+﻿
+@using EcommerceOnContainers.Web.WebMvc.Models
+@using EcommerceOnContainers.Web.WebMvc.Services
+@using EcommerceOnContainers.Web.WebMvc.ViewModels
+
+
+@inject IIdentityService<ApplicationUser> identityService 
+
+@{
+    ViewData["Title"] = "My Cart";
+}
+
+<form method="post" id="cartForm">
+    <div class="esh-basket">
+        @Html.Partial("_Header", new List<Header>() {
+            new Header() { Controller = "Catalog", Text = "Back to catalog" } })
+
+        @await Component.InvokeAsync("CartList", new { user = identityService.Get(User) })
+    </div>
+</form>
